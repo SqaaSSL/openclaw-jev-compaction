@@ -1,0 +1,222 @@
+{
+  "id": "jev-compaction",
+  "name": "Jev Compaction",
+  "description": "Verbatim context compaction for OpenClaw: TypeSafe Jev scores every tool call and result in one fast request, stale ones are dropped, everything kept stays word for word.",
+  "version": "1.0.0",
+  "kind": "context-engine",
+  "activation": {
+    "onStartup": true
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "TypeSafe API key",
+      "help": "TypeSafe API key for Jev. Leave unset to use the TYPESAFE_API_KEY environment variable.",
+      "sensitive": true,
+      "placeholder": "apikey_..."
+    },
+    "model": {
+      "label": "Jev model",
+      "help": "TypeSafe System One model name."
+    },
+    "keepThreshold": {
+      "label": "Keep threshold (both)",
+      "help": "Sets both thresholds below when they are not given."
+    },
+    "preserveRecentMessages": {
+      "label": "Recent messages to preserve",
+      "help": "Newest messages never touched by compaction; the first message is always kept."
+    },
+    "compactAtPercent": {
+      "label": "Compact at (% of context)",
+      "help": "Estimated context usage at which the engine asks Jev what to drop."
+    },
+    "minReductionRatio": {
+      "label": "Minimum reduction",
+      "help": "A Jev pass that frees less than this fraction while the session is still over budget hands over to the fallback."
+    },
+    "fallback": {
+      "label": "Fallback",
+      "help": "What to do when verbatim compaction cannot get the session under budget: summarize with OpenClaw's built-in compaction, or none."
+    },
+    "maxStateTokens": {
+      "label": "Maximum Jev state tokens",
+      "help": "Estimated token budget for the conversation state sent with every Jev request."
+    },
+    "maxRequestTokens": {
+      "label": "Maximum Jev request tokens",
+      "help": "Estimated token budget for state plus questions in one Jev request (Jev allows 64k per request; the state plus one question is always kept under 32k)."
+    },
+    "truncateHeadChars": {
+      "label": "Truncated tool result head",
+      "help": "Characters of a tool result kept when Jev decides its full output is no longer needed."
+    },
+    "stateDir": {
+      "label": "State directory",
+      "help": "Where per-session decision files are kept. Defaults to jev-compaction/ under the agent directory."
+    },
+    "resultPeekChars": {
+      "label": "Result excerpt",
+      "help": "Characters from the start and from the end of each tool result shown to Jev so it can judge the content; 0 shows only the size."
+    },
+    "maxConcurrentRequests": {
+      "label": "Concurrent Jev requests",
+      "help": "Jev requests in flight at once during one compaction pass."
+    },
+    "timeoutMs": {
+      "label": "Jev request timeout (ms)",
+      "help": "Deadline for one Jev request, response body included."
+    },
+    "protectTools": {
+      "label": "Protected tools",
+      "help": "Tools whose calls and results are always kept because they cannot be re-run. Replaces the default list (Agent, Task, AskUserQuestion, sessions_spawn, sessions_send, subagents, message)."
+    },
+    "editTools": {
+      "label": "Edit tools",
+      "help": "Tools that change files; their calls are always kept, as is the newest read of a file edited afterwards. Replaces the default list (Edit, Write, MultiEdit, NotebookEdit, edit, write, apply_patch)."
+    },
+    "keepCallThreshold": {
+      "label": "Keep call threshold",
+      "help": "Minimum Jev probability (0\u20131) for a tool call to stay."
+    },
+    "keepResultThreshold": {
+      "label": "Keep result threshold",
+      "help": "Minimum Jev probability (0\u20131) for a tool result to stay verbatim. Result scores run lower than call scores, so this default is lower."
+    },
+    "questionStyle": {
+      "label": "Question style",
+      "help": "useful asks whether a call or output still serves the task (recommended); recoverable is the original wording that asks whether re-running the tool would not do."
+    },
+    "retries": {
+      "label": "Retries",
+      "help": "Retries per Jev request on a rate limit, server error or transport failure."
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": {
+        "type": [
+          "string",
+          "object"
+        ]
+      },
+      "model": {
+        "type": "string",
+        "default": "jev-latest"
+      },
+      "baseUrl": {
+        "type": "string"
+      },
+      "goal": {
+        "type": "string"
+      },
+      "keepThreshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "preserveRecentMessages": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 6
+      },
+      "compactAtPercent": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 60
+      },
+      "minReductionRatio": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 0.1
+      },
+      "fallback": {
+        "type": "string",
+        "enum": [
+          "summarize",
+          "none"
+        ],
+        "default": "summarize"
+      },
+      "maxStateTokens": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 31000,
+        "default": 25000
+      },
+      "maxRequestTokens": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 64000,
+        "default": 60000
+      },
+      "truncateHeadChars": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 300
+      },
+      "stateDir": {
+        "type": "string"
+      },
+      "resultPeekChars": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 1000,
+        "default": 200
+      },
+      "maxConcurrentRequests": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 64,
+        "default": 4
+      },
+      "timeoutMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 600000,
+        "default": 15000
+      },
+      "protectTools": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "editTools": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "keepCallThreshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 0.5
+      },
+      "keepResultThreshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 0.25
+      },
+      "questionStyle": {
+        "type": "string",
+        "enum": [
+          "useful",
+          "recoverable"
+        ],
+        "default": "useful"
+      },
+      "retries": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10,
+        "default": 2
+      }
+    }
+  }
+}

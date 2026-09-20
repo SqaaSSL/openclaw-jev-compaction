@@ -1,0 +1,11 @@
+{
+  "extends": "../../openclaw-repo/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "rootDir": "../..",
+    "typeRoots": ["../../openclaw-repo/node_modules/@types"]
+  },
+  "include": ["check.ts"]
+}

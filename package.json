@@ -1,0 +1,80 @@
+{
+  "name": "openclaw-jev-compaction",
+  "version": "1.0.0",
+  "description": "Verbatim context compaction for OpenClaw: a context engine that asks TypeSafe's Jev which tool calls and results are still needed, drops the rest, and never summarizes.",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Hilo team",
+    "url": "https://hilo.cx"
+  },
+  "homepage": "https://github.com/SqaaSSL/openclaw-jev-compaction#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SqaaSSL/openclaw-jev-compaction.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SqaaSSL/openclaw-jev-compaction/issues"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "context-engine",
+    "compaction",
+    "context-window",
+    "typesafe",
+    "jev",
+    "agents"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run build:lib && npm run build:plugin",
+    "build:lib": "tsc -p tsconfig.build.json",
+    "build:plugin": "esbuild index.ts --bundle --platform=node --target=node20 --format=esm --outfile=dist/plugin.js --external:openclaw --external:openclaw/*",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "node --env-file=.env ./node_modules/.bin/tsx examples/demo.ts",
+    "replay": "node --env-file=.env ./node_modules/.bin/tsx scripts/replay.ts",
+    "verify:types": "openclaw-repo/node_modules/.bin/tsc -p verify/openclaw/tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "esbuild": "^0.28.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/plugin.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.9.3",
+      "minGatewayVersion": "2026.9.3",
+      "tested": [
+        "2026.9.3",
+        "2026.9.4"
+      ]
+    },
+    "build": {
+      "openclawVersion": "2026.9.4"
+    }
+  }
+}
