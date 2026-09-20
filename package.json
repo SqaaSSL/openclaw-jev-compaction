@@ -53,7 +53,9 @@
     "demo": "node --env-file=.env ./node_modules/.bin/tsx examples/demo.ts",
     "replay": "node --env-file=.env ./node_modules/.bin/tsx scripts/replay.ts",
     "verify:types": "openclaw-repo/node_modules/.bin/tsc -p verify/openclaw/tsconfig.json",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "bench": "node --env-file=.env ./node_modules/.bin/tsx benchmarks/run.ts",
+    "bench:samples": "tsx benchmarks/make-samples.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

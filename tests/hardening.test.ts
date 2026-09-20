@@ -93,7 +93,7 @@ describe('result excerpts', () => {
 });
 
 describe('protection rules', () => {
-  it('keeps failed calls, protected tools, edits and the newest read before an edit without asking Jev', async () => {
+  it('keeps failed calls, protected tools and edits without asking Jev, and leaves reads to Jev', async () => {
     const messages = [
       message('user', 'go'),
       call('r1', 'Read', { file_path: 'a.ts' }),
@@ -116,7 +116,7 @@ describe('protection rules', () => {
     ruleCalls(calls, { protectTools: new Set(DEFAULT_PROTECTED_TOOLS), editTools: new Set(DEFAULT_EDIT_TOOLS) });
     expect(Object.fromEntries(calls.map((c) => [c.tool_use_id, c.rule ?? null]))).toEqual({
       r1: null,
-      r2: 'read_before_edit',
+      r2: null,
       e1: 'edit',
       r3: null,
       x1: 'error',
@@ -125,11 +125,11 @@ describe('protection rules', () => {
     });
     const seen: JevQuestions[] = [];
     const output = await compact(messages, fakeJev(() => 0, seen), { preserveRecentMessages: 0 });
-    expect(Object.keys(seen[0]!).sort()).toEqual(['call_t1', 'call_t4', 'call_t7', 'result_t1', 'result_t4', 'result_t7']);
-    expect(output.stats.protected).toBe(4);
-    expect(output.stats.callsDropped).toBe(3);
+    expect(Object.keys(seen[0]!).sort()).toEqual(['call_t1', 'call_t2', 'call_t4', 'call_t7', 'result_t1', 'result_t2', 'result_t4', 'result_t7']);
+    expect(output.stats.protected).toBe(3);
+    expect(output.stats.callsDropped).toBe(4);
     const kept = output.messages.flatMap((m) => m.toolResults ?? []).map((r) => r.tool_use_id);
-    expect(kept).toEqual(['r2', 'e1', 'x1', 'q1']);
+    expect(kept).toEqual(['e1', 'x1', 'q1']);
   });
 
   it('lets the caller replace the tool lists', async () => {

@@ -54,10 +54,9 @@ export interface ToolCall {
 
 /**
  * Why a call is kept without asking Jev: it failed, its tool is in the protected
- * list (cannot be re-run), it changed a file, or it is the newest read of a file
- * that was edited afterwards.
+ * list (cannot be re-run), or it changed a file.
  */
-export type CallRule = 'error' | 'protected_tool' | 'edit' | 'read_before_edit';
+export type CallRule = 'error' | 'protected_tool' | 'edit';
 
 export interface CallAnswer {
   /** Jev's probability that the call itself still matters. */
