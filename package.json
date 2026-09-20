@@ -40,7 +40,8 @@
     "openclaw.plugin.json",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "scripts": {
     "build": "npm run build:lib && npm run build:plugin",

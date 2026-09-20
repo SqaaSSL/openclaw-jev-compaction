@@ -245,4 +245,4 @@ protection rules, separate thresholds and reworded questions, windowed
 scoring, the keep-signal guard, credential redaction and the removed-call
 markers. Jev is made by [TypeSafe](https://typesafe.ai).
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE) and [NOTICE](NOTICE).
