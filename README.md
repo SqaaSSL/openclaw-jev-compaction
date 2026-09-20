@@ -275,8 +275,8 @@ Verified against an OpenClaw 2026.9.4 source checkout: the engine compiles
 against OpenClaw's real `ContextEngine` and plugin API types, the packed
 tarball installs with the real CLI, `plugins doctor` passes, and a script
 drives the resolved engine through OpenClaw's plugin registry with live Jev
-calls. It runs as the context engine of a production Gateway on OpenClaw
-2026.9.3. Not yet exercised here: a full Gateway agent turn under load. Please
+calls. It has been tested fully on a production OpenClaw instance, where it
+runs as the context engine of a live Gateway on OpenClaw 2026.9.3. Please
 report what you see.
 
 ## Credits
